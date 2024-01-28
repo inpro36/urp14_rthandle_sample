@@ -1,1 +1,1 @@
-# urp14_rthandle_sample
+LT用サンプルプロジェクト
