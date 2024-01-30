@@ -8,7 +8,10 @@ internal class PostProcessRendererFeature : ScriptableRendererFeature
     
     public override void Create()
     {
-        _renderPass = new PostProcessRenderPass(_shader);
+        if (_renderPass == null)
+        {
+            _renderPass = new PostProcessRenderPass(_shader);
+        }
     }
 
     public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
@@ -27,6 +30,7 @@ internal class PostProcessRendererFeature : ScriptableRendererFeature
     protected override void Dispose(bool disposing)
     {
         _renderPass.Cleanup();
+        _renderPass = null;
         base.Dispose(disposing);
     }
 }

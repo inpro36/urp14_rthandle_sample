@@ -40,6 +40,11 @@ internal class PostProcessRenderPass : ScriptableRenderPass
             Debug.LogError("PostProcessRenderPass.Execute: Material is null.");
             return;
         }
+
+        if (renderingData.cameraData.cameraType == CameraType.SceneView)
+        {
+            return;
+        }
         
         var stack = VolumeManager.instance.stack;
         m_ColorAberration = stack.GetComponent<ColorAberration>();
@@ -64,8 +69,6 @@ internal class PostProcessRenderPass : ScriptableRenderPass
 
     void Render(CommandBuffer cmd, ref RenderingData renderingData)
     {
-        m_Materials.uber.SetFloat(IntensityShaderId, m_ColorAberration.intensity.value);
-        
         // NOTE: URP標準PostProcessPassでのSwap処理について(PostProcessPass.Swap参照)
         // URP標準PostProcessPassでは、m_UseSwapBuffer(SwapBufferを使用するかどうかのフラグ)が常にtrueになっており、
         // 特に理由がない限り、RTHandleが確保しているFrontBufferとBackBufferのSwapで実現している。
@@ -76,6 +79,7 @@ internal class PostProcessRenderPass : ScriptableRenderPass
         // NOTE: 内部でBlitter.BlitCameraTextureとScriptableRenderer.SwapColorBufferが実行されている.
         if (m_Materials.uber != null)
         {
+            m_Materials.uber.SetFloat(IntensityShaderId, m_ColorAberration.intensity.value);
             Blit(cmd, ref renderingData, m_Materials.uber, 0);
         }
 
