@@ -29,8 +29,7 @@ internal class PostProcessRenderPass : ScriptableRenderPass
     {
         // ConfigureTargetはConfigure内で呼ぶこと
         // Configure内でSetRenderTargetによる任意のRenderTarget指定をしてはいけない
-        // ConfigureClear(ClearFlag.Color, Color.black);
-        // ConfigureTarget(m_Source);
+        // 今回は何もしない。
     }
 
     public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
@@ -41,7 +40,7 @@ internal class PostProcessRenderPass : ScriptableRenderPass
             return;
         }
 
-        if (renderingData.cameraData.cameraType == CameraType.SceneView)
+        if (renderingData.cameraData.cameraType == CameraType.SceneView || renderingData.cameraData.cameraType == CameraType.Preview)
         {
             return;
         }
@@ -73,10 +72,7 @@ internal class PostProcessRenderPass : ScriptableRenderPass
         // URP標準PostProcessPassでは、m_UseSwapBuffer(SwapBufferを使用するかどうかのフラグ)が常にtrueになっており、
         // 特に理由がない限り、RTHandleが確保しているFrontBufferとBackBufferのSwapで実現している。
         // SwapBufferを使用しない場合は、TempRTHandleを経由してBlitしている。
-        // URP標準Swap処理で使用しているFrontBuffer取得処理であるScriptableRenderer.GetCameraColorFrontBufferは
-        // internal定義されており、カスタムパスでSwapを扱う場合、ScriptableRenderPass.Blitを使用する必要がある。
-        
-        // NOTE: 内部でBlitter.BlitCameraTextureとScriptableRenderer.SwapColorBufferが実行されている.
+        // ScriptableRenderPass.Blit内でBlit処理とSwap処理をおこなっている。
         if (m_Materials.uber != null)
         {
             m_Materials.uber.SetFloat(IntensityShaderId, m_ColorAberration.intensity.value);
