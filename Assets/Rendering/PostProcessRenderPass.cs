@@ -73,15 +73,14 @@ internal class PostProcessRenderPass : ScriptableRenderPass
         // 特に理由がない限り、RTHandleが確保しているFrontBufferとBackBufferのSwapで実現している。
         // SwapBufferを使用しない場合は、TempRTHandleを経由してBlitしている。
         // ScriptableRenderPass.Blit内でBlit処理とSwap処理をおこなっている。
+        // また、Load、Storeの可否を明示的に指定することができる。URP標準PostProcessPassではLoad、Storeを明示的に指定している。
+        // また、Load、Store処理が正常に動作するかはモバイル端末(Tile-Based Rendering)でのみ確認可能。
+        // 今回は明示的な指定はしない。
         if (m_Materials.uber != null)
         {
             m_Materials.uber.SetFloat(IntensityShaderId, m_ColorAberration.intensity.value);
             Blit(cmd, ref renderingData, m_Materials.uber, 0);
         }
-
-        // RenderingUtils.ReAllocateIfNeededによるリアロケート処理は、必要な時にしかリアロケートしないので、同じRTHandleを使っていればアロケートは発生しない
-        // Load、Storeの可否を明示的に指定することができる。URP標準PostProcessPassではLoad、Storeを明示的に指定している。
-        // また、Load、Store処理が正常に動作するかはモバイル端末(Tile-Based Rendering)でのみ確認可能。
     }
     
     class MaterialLibrary
